@@ -1,4 +1,4 @@
-# Questao 1a:
+# Questao 1b:
 
 Dadas as 3 tabelas:
 
@@ -28,7 +28,6 @@ schools:
 
 
 Desafios:
--  Escreva uma consulta PostgreSQL para obter, por nome da escola e por dia, a quantidade de alunos matriculados e o valor total das matrículas, tendo como restrição os cursos que começam com a palavra “data”. Ordene o resultado do dia mais recente para o mais antigo.
 - Utilizando a resposta do item a, escreva uma consulta para obter, por escola e por dia, a soma acumulada, a média móvel 7 dias e a média móvel 30 dias da quantidade de alunos.
 ---
 
@@ -45,7 +44,6 @@ ___
 ___
 
 ## Passo 3: Desenho da consulta:
--  Escreva uma consulta PostgreSQL para obter, por nome da escola e por dia, a quantidade de alunos matriculados e o valor total das matrículas, tendo como restrição os cursos que começam com a palavra “data”. Ordene o resultado do dia mais recente para o mais antigo.
 
   - Dataset simulado (utilizando ferramentas: runsql.com):
   ![image](https://github.com/user-attachments/assets/e9375c49-c50f-4889-b899-4abc86db8b86)
