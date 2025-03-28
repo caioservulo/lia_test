@@ -41,7 +41,7 @@ ___
 ## Passo 2: Construção do racional da consulta:
 - Enxergar chaves e relacionamentos
 - Definir estrutura da consultas (CET's, Agrupamentos, etc..)
-- Desenvolvimento
+- Desenvolvimento 
 ___
 
 ## Passo 3: Desenho da consulta:
