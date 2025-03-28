@@ -91,6 +91,8 @@ ___
 
 
   - Consulta desenvolvida:
+      - Racional
+         - Identificação de departamento: segui uma lógica de relacionar a lotacao_div (tabela empregado) com o cod_divisao (tabela divisao) para encontrar o nome da divissao (tabela divisao). COm esse mesmo racinal de relacionamento de tabelas fui capaz de realizar a contagem do total de empregados/divisao
       ```sql
       WITH
         cursos AS (
