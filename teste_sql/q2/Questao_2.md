@@ -168,8 +168,9 @@ ___
                 LEFT JOIN desconto desct ON e.matr = desct.matr
                 LEFT JOIN vencimento vc ON e.matr = vc.matr;
 
-          Entendento que o racional para o cálculo do saário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]***
+          Entendento que o racional para o cálculo do salário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]***
           A consulta para determinar o saário de cada funcionário é:
+        
                 ```sql
                   WITH
                   	empregados AS (
