@@ -94,7 +94,83 @@ ___
       - Racional
          - Identificação de departamento: segui uma lógica de relacionar a lotacao_div (tabela empregado) com o cod_divisao (tabela divisao) para encontrar o nome da divissao (tabela divisao). COm esse mesmo racional de relacionamento de tabelas fui capaz de realizar a contagem do total de empregados/divisao
               ```sql
-              WITH
+                    WITH
+                      empregados AS (
+                        SELECT
+                          emp.matr,
+                          emp.gerencia_cod_dep,
+                          emp.lotacao_div,
+                          emp.gerencia_div
+                        FROM public.empregado emp
+                      ),
+                      divisao AS (
+                        SELECT
+                          div.cod_divisao,
+                          div.cod_dep
+                        FROM public.divisao div
+                      ),
+                      departamento AS (
+                        SELECT
+                          dep.cod_dep,
+                          dep.nome
+                        FROM public.departamento dep
+                      )
+                    SELECT
+                      dp.nome,
+                      COUNT(DISTINCT e.matr) AS qtd_empregados
+                    FROM departamento dp
+                    LEFT JOIN divisao d ON dp.cod_dep = d.cod_dep
+                    LEFT JOIN empregados e ON d.cod_divisao = e.lotacao_div
+                    GROUP BY
+                      dp.nome;
+  
+        -  Identificando salários: na consulta abaixo sou capar de ter visao de todos od descontos e vencimentos por funcionário.
+              ```sql
+                    WITH
+                    	empregados AS (
+                    		SELECT
+                    			emp.matr,
+                    			emp.gerencia_cod_dep,
+                    			emp.lotacao_div,
+                    			emp.gerencia_div
+                    		FROM public.empregado emp
+                    	),
+                    	vencimento AS (
+                    		SELECT
+                    			ev.matr,
+                    			venc.nome,
+                    			venc.tipo,
+                    			venc.valor
+                    		FROM public.emp_venc ev
+                    		LEFT JOIN public.vencimento venc ON ev.cod_venc = venc.cod_venc
+                    	),
+                    	desconto AS (
+                    		SELECT
+                    			ed.matr,
+                    			dsct.nome,
+                    			dsct.tipo,
+                    			dsct.valor
+                    		FROM public.emp_desc ed
+                    		LEFT JOIN public.desconto dsct ON ed.cod_desc = dsct.cod_desc
+                    	)
+                    SELECT
+                    	e.matr,
+                    	e.gerencia_cod_dep,
+                    	e.lotacao_div,
+                    	e.gerencia_div,
+                    	COALESCE(desct.nome, 'Sem desconto') AS nome_desconto,
+                    	COALESCE(desct.tipo, '-') AS tipo_desconto,
+                    	COALESCE(desct.valor, 0)::NUMERIC AS valor_desconto,
+                    	vc.nome AS nome_vencimento,
+                    	vc.tipo AS tipo_vencimento,
+                    	vc.valor AS valor_vencimento
+                    FROM empregados e
+                    LEFT JOIN desconto desct ON e.matr = desct.matr
+                    LEFT JOIN vencimento vc ON e.matr = vc.matr;
+
+          Entendento que o racional para o cálculo do salário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]*** A consulta para determinar o salário de cada funcionário é:
+          ```sql
+                WITH
                 empregados AS (
                   SELECT
                     emp.matr,
@@ -103,123 +179,45 @@ ___
                     emp.gerencia_div
                   FROM public.empregado emp
                 ),
-                divisao AS (
+                vencimento AS (
                   SELECT
-                    div.cod_divisao,
-                    div.cod_dep
-                  FROM public.divisao div
+                    ev.matr,
+                    venc.nome,
+                    venc.tipo,
+                    venc.valor
+                  FROM public.emp_venc ev
+                  LEFT JOIN public.vencimento venc ON ev.cod_venc = venc.cod_venc
                 ),
-                departamento AS (
+                desconto AS (
                   SELECT
-                    dep.cod_dep,
-                    dep.nome
-                  FROM public.departamento dep
-                )
-              SELECT
-                dp.nome,
-                COUNT(DISTINCT e.matr) AS qtd_empregados
-              FROM departamento dp
-              LEFT JOIN divisao d ON dp.cod_dep = d.cod_dep
-              LEFT JOIN empregados e ON d.cod_divisao = e.lotacao_div
-              GROUP BY
-                dp.nome;
-  
-        -  Identificando salários: na consulta abaixo sou capar de ter visao de todos od descontos e vencimentos por funcionário.
-              ```sql
-                WITH
-                	empregados AS (
-                		SELECT
-                			emp.matr,
-                			emp.gerencia_cod_dep,
-                			emp.lotacao_div,
-                			emp.gerencia_div
-                		FROM public.empregado emp
-                	),
-                	vencimento AS (
-                		SELECT
-                			ev.matr,
-                			venc.nome,
-                			venc.tipo,
-                			venc.valor
-                		FROM public.emp_venc ev
-                		LEFT JOIN public.vencimento venc ON ev.cod_venc = venc.cod_venc
-                	),
-                	desconto AS (
-                		SELECT
-                			ed.matr,
-                			dsct.nome,
-                			dsct.tipo,
-                			dsct.valor
-                		FROM public.emp_desc ed
-                		LEFT JOIN public.desconto dsct ON ed.cod_desc = dsct.cod_desc
-                	)
-                SELECT
-                	e.matr,
-                	e.gerencia_cod_dep,
-                	e.lotacao_div,
-                	e.gerencia_div,
-                	COALESCE(desct.nome, 'Sem desconto') AS nome_desconto,
-                	COALESCE(desct.tipo, '-') AS tipo_desconto,
-                	COALESCE(desct.valor, 0)::NUMERIC AS valor_desconto,
-                	vc.nome AS nome_vencimento,
-                	vc.tipo AS tipo_vencimento,
-                	vc.valor AS valor_vencimento
-                FROM empregados e
-                LEFT JOIN desconto desct ON e.matr = desct.matr
-                LEFT JOIN vencimento vc ON e.matr = vc.matr;
-
-          Entendento que o racional para o cálculo do salário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]***
-          A consulta para determinar o saário de cada funcionário é:
-        
-                ```sql
-                  WITH
-                  	empregados AS (
-                  		SELECT
-                  			emp.matr,
-                  			emp.gerencia_cod_dep,
-                  			emp.lotacao_div,
-                  			emp.gerencia_div
-                  		FROM public.empregado emp
-                  	),
-                  	vencimento AS (
-                  		SELECT
-                  			ev.matr,
-                  			venc.nome,
-                  			venc.tipo,
-                  			venc.valor
-                  		FROM public.emp_venc ev
-                  		LEFT JOIN public.vencimento venc ON ev.cod_venc = venc.cod_venc
-                  	),
-                  	desconto AS (
-                  		SELECT
-                  			ed.matr,
-                  			dsct.nome,
-                  			dsct.tipo,
-                  			dsct.valor
-                  		FROM public.emp_desc ed
-                  		LEFT JOIN public.desconto dsct ON ed.cod_desc = dsct.cod_desc
-                  	),
-                  	salario AS (
-                  		SELECT 
-                  			e.matr,
-                  			COALESCE(SUM(desct.valor), 0)::NUMERIC AS valor_desconto,
-                  			COALESCE(SUM(vc.valor), 0)::NUMERIC AS valor_vencimento,
-                  			ROUND ((COALESCE(SUM(vc.valor), 0)::NUMERIC - COALESCE(SUM(desct.valor), 0)::NUMERIC),2) AS salario
-                  		FROM empregados e
-                  		LEFT JOIN desconto desct ON e.matr = desct.matr
-                  		LEFT JOIN vencimento vc ON e.matr = vc.matr
-                  		GROUP BY
-                  			e.matr
-                  	)
-                  SELECT
-                  	e.matr,
-                  	ROUND (AVG(valor_vencimento), 2) AS valor_vencimento,
-                  	ROUND(AVG(s.valor_desconto), 2) AS valor_desconto,
-                  	ROUND(AVG(salario), 2) AS salario
+                    ed.matr,
+                    dsct.nome,
+                    dsct.tipo,
+                    dsct.valor
+                  FROM public.emp_desc ed
+                  LEFT JOIN public.desconto dsct ON ed.cod_desc = dsct.cod_desc
+                ),
+                salario AS (
+                  SELECT 
+                    e.matr,
+                    COALESCE(SUM(desct.valor), 0)::NUMERIC AS valor_desconto,
+                    COALESCE(SUM(vc.valor), 0)::NUMERIC AS valor_vencimento,
+                    ROUND ((COALESCE(SUM(vc.valor), 0)::NUMERIC - COALESCE(SUM(desct.valor), 0)::NUMERIC),2) AS salario
                   FROM empregados e
-                  LEFT JOIN salario s ON e.matr = s.matr
+                  LEFT JOIN desconto desct ON e.matr = desct.matr
+                  LEFT JOIN vencimento vc ON e.matr = vc.matr
                   GROUP BY
-                  	e.matr;
+                    e.matr
+                )
+                SELECT
+                e.matr,
+                ROUND (AVG(valor_vencimento), 2) AS valor_vencimento,
+                ROUND(AVG(s.valor_desconto), 2) AS valor_desconto,
+                ROUND(AVG(salario), 2) AS salario
+                FROM empregados e
+                LEFT JOIN salario s ON e.matr = s.matr
+                GROUP BY
+                e.matr;
 
 
 ![image](https://github.com/user-attachments/assets/11bb76c9-bf6c-4284-a219-1adf35544992)
