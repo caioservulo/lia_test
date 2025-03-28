@@ -95,52 +95,34 @@ ___
          - Identificação de departamento: segui uma lógica de relacionar a lotacao_div (tabela empregado) com o cod_divisao (tabela divisao) para encontrar o nome da divissao (tabela divisao). COm esse mesmo racinal de relacionamento de tabelas fui capaz de realizar a contagem do total de empregados/divisao
       ```sql
       WITH
-        cursos AS (
-          SELECT
-            co.id,
-            co.name,
-            co.price,
-            co.school_id
-          FROM courses co
-        ),
-        escolas AS (
-          SELECT
-            s.id,
-            s.name
-          FROM schools s
-        ),
-        alunos AS (
-          SELECT
-            st.enrolled_at,
-            st.course_id,
-            st.id
-          FROM students st
-          ORDER BY
-            st.enrolled_at DESC
-        )
+      	empregados AS (
+      		SELECT
+      			emp.matr,
+      			emp.gerencia_cod_dep,
+      			emp.lotacao_div,
+      			emp.gerencia_div
+      		FROM public.empregado emp
+      	),
+      	divisao AS (
+      		SELECT
+      			div.cod_divisao,
+      			div.cod_dep
+      		FROM public.divisao div
+      	),
+      	departamento AS (
+      		SELECT
+      			dep.cod_dep,
+      			dep.nome
+      		FROM public.departamento dep
+      	)
       SELECT
-        e.name,
-        a.enrolled_at,
-        COUNT(
-          CASE
-            WHEN c.name ~* '^data' -- nome inicia com a palavra data
-            THEN a.id
-            ELSE NULL
-        END) AS qtd_alunos_matriculados,
-        ROUND(SUM(
-          CASE
-            WHEN c.name ~* '^data' -- nome inicia com a palavra data
-            THEN c.price
-            ELSE 0
-        END),2) AS valor_total_matriculas
-      FROM alunos a
-      LEFT JOIN cursos c ON a.course_id = c.id
-      LEFT JOIN escolas e ON c.school_id = e.id
+      	dp.nome,
+      	COUNT(DISTINCT e.matr) AS qtd_empregados
+      FROM departamento dp
+      LEFT JOIN divisao d ON dp.cod_dep = d.cod_dep
+      LEFT JOIN empregados e ON d.cod_divisao = e.lotacao_div
       GROUP BY
-        e.name,
-        a.enrolled_at
-      ORDER BY
-        a.enrolled_at DESC;
+      	dp.nome;
 
   - Retorno:
 
