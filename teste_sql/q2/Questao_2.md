@@ -72,7 +72,8 @@ Desafios:
 ## Passo 1: Ter visão da estrutura de dados:
   Utilizando a ferramenta [dbdiagram](https://dbdiagram.io/d/Questao-2-67e701034f7afba1849df205) podemos criar virtualmente as tabelas e visualizar seus relacionamentos.
 
-![image](https://github.com/user-attachments/assets/1fb9c5c5-f862-4e93-ac57-e6a3bc22cbc0)
+![image](https://github.com/user-attachments/assets/80eaf09a-4797-4df2-ac54-906fe17001aa)
+
 
 ___
 
