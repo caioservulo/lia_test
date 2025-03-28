@@ -47,3 +47,66 @@ ___
 ## Passo 3: Desenho da consulta:
 -  Escreva uma consulta PostgreSQL para obter, por nome da escola e por dia, a quantidade de alunos matriculados e o valor total das matrículas, tendo como restrição os cursos que começam com a palavra “data”. Ordene o resultado do dia mais recente para o mais antigo.
 
+  - Dataset simulado (utilizando ferramentas: runsql.com):
+  ![image](https://github.com/user-attachments/assets/e9375c49-c50f-4889-b899-4abc86db8b86)
+  ![image](https://github.com/user-attachments/assets/6b225a46-725c-4c2d-8155-a131d6a5ac63)
+  ![image](https://github.com/user-attachments/assets/b7a824ca-8a23-4d87-9829-0839a645dae4)
+  ![image](https://github.com/user-attachments/assets/b1ff7cfb-91d4-49b0-869a-9b650198654b)
+
+  - Consulta desenvolvida:
+      ```sql
+      WITH
+        cursos AS (
+          SELECT
+            co.id,
+            co.name,
+            co.price,
+            co.school_id
+          FROM courses co
+        ),
+        escolas AS (
+          SELECT
+            s.id,
+            s.name
+          FROM schools s
+        ),
+        alunos AS (
+          SELECT
+            st.enrolled_at,
+            st.course_id,
+            st.id
+          FROM students st
+          ORDER BY
+            st.enrolled_at DESC
+        )
+      SELECT
+        e.name,
+        a.enrolled_at,
+        COUNT(
+          CASE
+            WHEN c.name ~* '^data' -- nome inicia com a palavra data
+            THEN a.id
+            ELSE NULL
+        END) AS qtd_alunos_matriculados,
+        ROUND(SUM(
+          CASE
+            WHEN c.name ~* '^data' -- nome inicia com a palavra data
+            THEN c.price
+            ELSE 0
+        END),2) AS valor_total_matriculas
+      FROM alunos a
+      LEFT JOIN cursos c ON a.course_id = c.id
+      LEFT JOIN escolas e ON c.school_id = e.id
+      GROUP BY
+        e.name,
+        a.enrolled_at
+      ORDER BY
+        a.enrolled_at DESC;
+
+  - Retorno:
+
+![image](https://github.com/user-attachments/assets/11bb76c9-bf6c-4284-a219-1adf35544992)
+
+**Análise:** podemos ver, por dia, o volume de alunos e total de matrícula apenas dos cursos que iniciam dom o temro "data" (sem diferenciar minúculas e maiúsculas, prevenindo despadronizações). Como melhorias, poderíamos implementar os dados em uma dashboard onde o nome do curso poderia ser um filtro do memso, simoplificando a consulta e dando autonomia ao usuário.
+
+
