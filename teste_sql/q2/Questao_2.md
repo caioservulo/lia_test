@@ -1,4 +1,4 @@
-# Questao 1a:
+# Questao 2:
 
 Dadas as tabelas:
 
