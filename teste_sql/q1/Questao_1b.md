@@ -52,85 +52,85 @@ ___
   ![image](https://github.com/user-attachments/assets/b1ff7cfb-91d4-49b0-869a-9b650198654b)
 
   - Consulta desenvolvida:
-      ```sql
-      WITH
-        cursos AS (
-          SELECT
-            co.id,
-            co.name,
-            co.price,
-            co.school_id
-          FROM courses co
-        ),
-        escolas AS (
-          SELECT
-            s.id,
-            s.name
-          FROM schools s
-        ),
-        alunos AS (
-          SELECT
-            st.enrolled_at,
-            st.course_id,
-            st.id
-          FROM students st
-          ORDER BY
-            st.enrolled_at DESC
-        ),
-        db AS(
-          SELECT
-            e.name,
-            a.enrolled_at,
-            COUNT(
-              CASE
-                WHEN c.name ~* '^data' -- nome inicia com a palavra data
-                THEN a.id
-                ELSE NULL
-            END) AS qtd_alunos_matriculados,
-            ROUND(SUM(
-              CASE
-                WHEN c.name ~* '^data' -- nome inicia com a palavra data
-                THEN c.price
-                ELSE 0
-            END),2) AS valor_total_matriculas
-          FROM alunos a
-          LEFT JOIN cursos c ON a.course_id = c.id
-          LEFT JOIN escolas e ON c.school_id = e.id
-          GROUP BY
-            e.name,
-            a.enrolled_at
-          ORDER BY
-            a.enrolled_at DESC
-        )
-      SELECT
-          name,
-          enrolled_at,
-          
-          ROUND(
-              AVG(qtd_alunos_matriculados) OVER (
-                  PARTITION BY name -- Agrupa por escola
-                  ORDER BY enrolled_at 
-                  ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
-              ), 0
-          ) AS media_movel_qtd_alunos_7d,
-      
-          ROUND(
-              AVG(qtd_alunos_matriculados) OVER (
-                  PARTITION BY name 
-                  ORDER BY enrolled_at 
-                  ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
-              ), 0
-          ) AS media_movel_qtd_alunos_30d,
-      
-          SUM(qtd_alunos_matriculados) OVER (
-              PARTITION BY name 
-              ORDER BY enrolled_at 
-              ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-          ) AS soma_acumulada_qtd_alunos
+```sql
+WITH
+  cursos AS (
+    SELECT
+      co.id,
+      co.name,
+      co.price,
+      co.school_id
+    FROM courses co
+  ),
+  escolas AS (
+    SELECT
+      s.id,
+      s.name
+    FROM schools s
+  ),
+  alunos AS (
+    SELECT
+      st.enrolled_at,
+      st.course_id,
+      st.id
+    FROM students st
+    ORDER BY
+      st.enrolled_at DESC
+  ),
+  db AS(
+    SELECT
+      e.name,
+      a.enrolled_at,
+      COUNT(
+        CASE
+          WHEN c.name ~* '^data' -- nome inicia com a palavra data
+          THEN a.id
+          ELSE NULL
+      END) AS qtd_alunos_matriculados,
+      ROUND(SUM(
+        CASE
+          WHEN c.name ~* '^data' -- nome inicia com a palavra data
+          THEN c.price
+          ELSE 0
+      END),2) AS valor_total_matriculas
+    FROM alunos a
+    LEFT JOIN cursos c ON a.course_id = c.id
+    LEFT JOIN escolas e ON c.school_id = e.id
+    GROUP BY
+      e.name,
+      a.enrolled_at
+    ORDER BY
+      a.enrolled_at DESC
+  )
+SELECT
+    name,
+    enrolled_at,
+    
+    ROUND(
+        AVG(qtd_alunos_matriculados) OVER (
+            PARTITION BY name -- Agrupa por escola
+            ORDER BY enrolled_at 
+            ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+        ), 0
+    ) AS media_movel_qtd_alunos_7d,
 
-      FROM db
-      ORDER BY name, enrolled_at DESC;
+    ROUND(
+        AVG(qtd_alunos_matriculados) OVER (
+            PARTITION BY name 
+            ORDER BY enrolled_at 
+            ROWS BETWEEN 29 PRECEDING AND CURRENT ROW
+        ), 0
+    ) AS media_movel_qtd_alunos_30d,
 
+    SUM(qtd_alunos_matriculados) OVER (
+        PARTITION BY name 
+        ORDER BY enrolled_at 
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+    ) AS soma_acumulada_qtd_alunos
+
+FROM db
+ORDER BY name, enrolled_at DESC;
+```
 
 
   - Retorno:
