@@ -125,7 +125,8 @@ GROUP BY
   dp.nome;
 ```              
   
-        -  Identificando salários: na consulta abaixo sou capar de ter visao de todos od descontos e vencimentos por funcionário.
+   -  Identificando salários: na consulta abaixo sou capar de ter visao de todos od descontos e vencimentos por funcionário.
+     
 ```sql
 WITH
   empregados AS (
@@ -170,8 +171,8 @@ LEFT JOIN desconto desct ON e.matr = desct.matr
 LEFT JOIN vencimento vc ON e.matr = vc.matr;
 ```              
 
+Entendento que o racional para o cálculo do salário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]*** A consulta para determinar o salário de cada funcionário é:
 
-          Entendento que o racional para o cálculo do salário do trabalhador seja: ***[somatório de todos os seus vencimentos - somatório de todos os seus descontos]*** A consulta para determinar o salário de cada funcionário é:
 ```sql
 WITH
 empregados AS (
