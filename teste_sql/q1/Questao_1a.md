@@ -52,68 +52,69 @@ ___
   ![image](https://github.com/user-attachments/assets/b1ff7cfb-91d4-49b0-869a-9b650198654b)
 
   - Consulta desenvolvida:
-      ```sql
-      WITH
-        cursos AS (
-          SELECT
-            co.id,
-            co.name,
-            co.price,
-            co.school_id
-          FROM courses co
-        ),
-        escolas AS (
-          SELECT
-            s.id,
-            s.name
-          FROM schools s
-        ),
-        alunos AS (
-          SELECT
-            st.enrolled_at,
-            st.course_id,
-            st.id
-          FROM students st
-          ORDER BY
-            st.enrolled_at DESC
-        )
-      SELECT
-        e.name,
-        a.enrolled_at,
-        COUNT(
-          CASE
-            WHEN c.name ~* '^data' -- nome inicia com a palavra data
-            THEN a.id
-            ELSE NULL
-        END) AS qtd_alunos_matriculados,
-        ROUND(SUM(
-          CASE
-            WHEN c.name ~* '^data' -- nome inicia com a palavra data
-            THEN c.price
-            ELSE 0
-        END),2) AS valor_total_matriculas
-      FROM alunos a
-      LEFT JOIN cursos c ON a.course_id = c.id
-      LEFT JOIN escolas e ON c.school_id = e.id
-      GROUP BY
-        e.name,
-        a.enrolled_at
-      ORDER BY
-        a.enrolled_at DESC;
-
+```sql
+WITH
+  cursos AS (
+    SELECT
+      co.id,
+      co.name,
+      co.price,
+      co.school_id
+    FROM courses co
+  ),
+  escolas AS (
+    SELECT
+      s.id,
+      s.name
+    FROM schools s
+  ),
+  alunos AS (
+    SELECT
+      st.enrolled_at,
+      st.course_id,
+      st.id
+    FROM students st
+    ORDER BY
+      st.enrolled_at DESC
+  )
+SELECT
+  e.name,
+  a.enrolled_at,
+  COUNT(
+    CASE
+      WHEN c.name ~* '^data' -- nome inicia com a palavra data
+      THEN a.id
+      ELSE NULL
+  END) AS qtd_alunos_matriculados,
+  ROUND(SUM(
+    CASE
+      WHEN c.name ~* '^data' -- nome inicia com a palavra data
+      THEN c.price
+      ELSE 0
+  END),2) AS valor_total_matriculas
+FROM alunos a
+LEFT JOIN cursos c ON a.course_id = c.id
+LEFT JOIN escolas e ON c.school_id = e.id
+GROUP BY
+  e.name,
+  a.enrolled_at
+ORDER BY
+  a.enrolled_at DESC;
+```
   - Retorno:
 
 ![image](https://github.com/user-attachments/assets/11bb76c9-bf6c-4284-a219-1adf35544992)
 
 **Análise:** podemos ver, por dia, o volume de alunos e total de matrícula apenas dos cursos que iniciam dom o temro "data" (sem diferenciar minúculas e maiúsculas, prevenindo despadronizações). Como melhorias, poderíamos: 
   - Criar uma tabela d-calendario onde poderíamos realizar a análise em cima de dias corridos, no case acima analisei tomando como base a ata de inscrição. Seria basicamente implementar um código:
-      ```sql
-        WITH calendario AS (
-    SELECT generate_series(
-        '2024-01-01'::DATE,  
-        '2024-12-31'::DATE,  
-        '1 day'::INTERVAL
-    )::DATE AS data
+```sql
+WITH calendario AS (
+  SELECT generate_series(
+    '2024-01-01'::DATE,  
+    '2024-12-31'::DATE,  
+    '1 day'::INTERVAL
+)::DATE AS data
+```      
   e, após isso, realizar LEFT JOINS com as CETs desemnvolvidas para seguir co um análise a nível calendário.
   - Implementar os dados em uma dashboard onde o nome do curso poderia ser um filtro do memso, simoplificando a consulta e dando autonomia ao usuário.
 
