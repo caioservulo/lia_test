@@ -125,7 +125,7 @@ GROUP BY
   dp.nome;
 ```              
   
-   -  Identificando salários: na consulta abaixo sou capar de ter visao de todos od descontos e vencimentos por funcionário.
+   -  Identificando salários: na consulta abaixo sou capar de ter visao de todos os descontos e vencimentos por funcionário.
      
 ```sql
 WITH
@@ -297,14 +297,6 @@ ORDER BY
 ```
 ---
 
-**Análise:** podemos ver, por dia, o volume de alunos e total de matrícula apenas dos cursos que iniciam dom o temro "data" (sem diferenciar minúculas e maiúsculas, prevenindo despadronizações). Como melhorias, poderíamos: 
-  - Criar uma tabela d-calendario onde poderíamos realizar a análise em cima de dias corridos, no case acima analisei tomando como base a ata de inscrição. Seria basicamente implementar um código:
-      ```sql
-        WITH calendario AS (
-    SELECT generate_series(
-        '2024-01-01'::DATE,  
-        '2024-12-31'::DATE,  
-        '1 day'::INTERVAL
-    )::DATE AS data
-  e, após isso, realizar LEFT JOINS com as CETs desemnvolvidas para seguir co um análise a nível calendário.
-  - Implementar os dados em uma dashboard onde o nome do curso poderia ser um filtro do memso, simoplificando a consulta e dando autonomia ao usuário.
+**Análise:** 
+- Foi identificado 1 funcionário com entradas zeradas, entendi que pdoderia ser um problema na base e não o incluí apenas no calculo das médias salariais e mínimos salariais. Contudo o funcionário aparece no total de funcionários por departamento.
+  
