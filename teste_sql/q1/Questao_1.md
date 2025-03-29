@@ -122,36 +122,7 @@ WITH calendario AS (
 
 # Questao 1b:
 
-Dadas as 3 tabelas:
-
-students:
-|**campo**| **type** | **comentário**|
-|----------|---------|-------------------|
-|id |int|-|
-|name| text|-|
-|enrolled_at |date| -|
-|course_id |text|-|
-
-
-courses: 
-|**campo**| **type** |**comentário**|
-|----------|---------|-------------------|
-|id |int|-|
-|name| text|-|
-|price |numeric| configuraria o data type como FLOAT a depender do DB|
-|school_id |text|  configuraria o data type como INT a depender do DB|
-
-
-schools: 
-|**campo**| **type** |**comentário**|
-|----------|---------|-------------------|
-|id |int|-|
-|name| text|-|
-
-
-Desafios:
-- Utilizando a resposta do item a, escreva uma consulta para obter, por escola e por dia, a soma acumulada, a média móvel 7 dias e a média móvel 30 dias da quantidade de alunos.
----
+Dadas as 3 tabelas utilizadas no case anterior.
 
 ## Passo 1: Ter visão da estrutura de dados:
   Utilizando a ferramenta [dbdiagram](https://dbdiagram.io/d/67e701104f7afba1849df321) podemos criar virtualmente as tabelas e visualizar seus relacionamentos.
