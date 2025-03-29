@@ -1,7 +1,10 @@
-# lia_test - Caio Melo
+# Lia_test - Caio Melo
+---
+
 Primeiro gostaria de agradecer a oportunidade 😄
 
-Desenrolar dos testes de SQL seguem separados por pastas:
+---
+O descritivo das consultas SQL seguem separados por pastas:
 
 |**Questão**|**Pasta**|
 |-----------|---------|
