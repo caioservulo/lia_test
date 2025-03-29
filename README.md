@@ -12,7 +12,8 @@ Seguem Também os arquivos SQL com as resoluções (consultas finais) 🚀
 
 |**Questão**|**Arquivo**|
 |-----------|---------|
-|Questão 1a| [Uploading questao_1a.sql…]()
-|
-|Questão 1b| |
-|Questão 2| |
+|Questão 1a| [questao_1a.txt](https://github.com/user-attachments/files/19514210/questao_1a.txt)|
+|Questão 1b|[quetsao_1b.txt](https://github.com/user-attachments/files/19514207/quetsao_1b.txt) |
+|Questão 2|[questao_2.txt](https://github.com/user-attachments/files/19514212/questao_2.txt) |
+
+
